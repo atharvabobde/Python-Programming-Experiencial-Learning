@@ -1,0 +1,137 @@
+exchange_rates = {
+    "USD": 1.0,
+    "INR": 83.50,
+    "EUR": 0.92,
+    "GBP": 0.78,
+    "JPY": 154.50,
+    "AUD": 1.52
+}
+
+def show_currencies():
+    print("\nAvailable Currencies:")
+    print("---------------------")
+    print("USD - US Dollar")
+    print("INR - Indian Rupee")
+    print("EUR - Euro")
+    print("GBP - British Pound")
+    print("JPY - Japanese Yen")
+    print("AUD - Australian Dollar")
+
+
+def convert_currency(amount, from_currency, to_currency):
+
+    amount_in_usd = amount / exchange_rates[from_currency]
+
+    result = amount_in_usd * exchange_rates[to_currency]
+
+    return result
+
+def save_history(amount, from_currency, result, to_currency):
+
+    with open("history.txt", "a") as file:
+        file.write(
+            f"{amount:.2f} {from_currency} = "
+            f"{result:.2f} {to_currency}\n"
+        )
+
+
+def show_history():
+
+    try:
+        with open("history.txt", "r") as file:
+
+            history = file.read()
+
+            if history:
+                print("\n===== Conversion History =====")
+                print(history)
+            else:
+                print("\nNo conversion history found.")
+
+    except FileNotFoundError:
+        print("\nNo conversion history found.")
+
+while True:
+
+    print("\n================================")
+    print("       CURRENCY CONVERTER")
+    print("================================")
+    print("1. Convert Currency")
+    print("2. Show Available Currencies")
+    print("3. Show Conversion History")
+    print("4. Exit")
+
+    choice = input("\nEnter your choice: ")
+
+    if choice == "1":
+
+        try:
+            show_currencies()
+
+            from_currency = input(
+                "\nEnter source currency: "
+            ).upper()
+
+            to_currency = input(
+                "Enter target currency: "
+            ).upper()
+
+            amount = float(
+                input("Enter amount: ")
+            )
+
+            # Validate currencies
+            if from_currency not in exchange_rates:
+                print("Invalid source currency!")
+                continue
+
+            if to_currency not in exchange_rates:
+                print("Invalid target currency!")
+                continue
+
+            if amount <= 0:
+                print("Amount must be greater than zero!")
+                continue
+
+            result = convert_currency(
+                amount,
+                from_currency,
+                to_currency
+            )
+
+            print("\n===== Conversion Result =====")
+            print(
+                f"{amount:.2f} {from_currency} = "
+                f"{result:.2f} {to_currency}"
+            )
+
+            save_history(
+                amount,
+                from_currency,
+                result,
+                to_currency
+            )
+
+            print("Conversion saved to history.")
+
+        except ValueError:
+            print(
+                "Invalid input! "
+                "Please enter a valid number."
+            )
+
+        except Exception as e:
+            print("An error occurred:", e)
+
+    elif choice == "2":
+        show_currencies()
+
+    elif choice == "3":
+        show_history()
+
+    elif choice == "4":
+        print("\nThank you for using Currency Converter!")
+        break
+
+    else:
+        print("Invalid choice! Please select 1-4.")
